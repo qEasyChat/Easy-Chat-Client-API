@@ -45,6 +45,7 @@ public:
 	void set_server_name(std::string server_name);
 
 	std::string recive_message();
+	void send_message(std::string message);
 
 private:
 	std::string server_name;

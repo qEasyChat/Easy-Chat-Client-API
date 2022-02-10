@@ -95,9 +95,15 @@ void Client::sender() {
 	while (true) {
 		std::string message = "";
 		std::getline(std::cin, message);
-		this->server_connection->send_message(message);
+		this->send_message(message);
 	}
 }
+
+void Client::send_message(std::string message)
+{
+	this->server_connection->send_message(message);
+}
+
 
 std::string Client::get_server_name()
 {
