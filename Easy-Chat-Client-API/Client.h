@@ -43,6 +43,9 @@ public:
 
 	std::string get_server_name();
 	void set_server_name(std::string server_name);
+
+	std::string recive_message();
+
 private:
 	std::string server_name;
 	std::thread reciver;
@@ -54,6 +57,5 @@ private:
 
 	void connect_to_server();
 	void authentification(std::string username, std::string password);
-	void recive_message();
 };
 

@@ -80,13 +80,13 @@ void Client::start_reciver()
 	this->reciver = std::thread(&Client::recive_message, this);
 }
 
-void Client::recive_message() {
+std::string Client::recive_message() {
 	std::string message = "";
 	while (message!= "SOCKET_DOWN") {
 		message = this->server_connection->recive_message();
 		if(message != "" || message != "\n")
 		{
-			std::cout << message << std::endl;
+			return message;
 		}
 	}
 }
