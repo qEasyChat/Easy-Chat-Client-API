@@ -87,7 +87,7 @@ void Client::reciver()
 		message = this->recive_message();
 		if (!message.empty())
 		{
-			std::cout << message;
+			std::cout << message << std::endl;
 		}
 	}
 }
