@@ -20,8 +20,8 @@ Client::Client(int port_number, const std::string ip)
 }
 
 Client::~Client() {
-	if (reciver.joinable()) {
-		reciver.join();
+	if (recive_thread.joinable()) {
+		recive_thread.join();
 	}
 	this->server_name = "";
 	this->server_connection.reset();
@@ -77,18 +77,29 @@ void Client::authentification(std::string username, std::string password)
 
 void Client::start_reciver()
 {
-	this->reciver = std::thread(&Client::recive_message, this);
+	this->recive_thread = std::thread(&Client::reciver, this);
 }
 
-std::string Client::recive_message() {
+void Client::reciver()
+{
 	std::string message = "";
-	while (message!= "SOCKET_DOWN") {
-		message = this->server_connection->recive_message();
-		if(message != "" || message != "\n")
+	while (message != "SOCKET_DOWN") {
+		message = this->recive_message();
+		if (!message.empty())
 		{
-			return message;
+			std::cout << message;
 		}
 	}
+}
+
+
+std::string Client::recive_message() {
+	std::string message = this->server_connection->recive_message();
+	if (message != "" || message != "\n")
+	{
+		return message;
+	}
+	return NULL;
 }
 
 void Client::sender() {

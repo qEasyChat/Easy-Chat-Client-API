@@ -49,7 +49,7 @@ public:
 
 private:
 	std::string server_name;
-	std::thread reciver;
+	std::thread recive_thread;
 
 	std::shared_ptr<Connection> server_connection;
 	struct sockaddr_in server_addr;
@@ -58,5 +58,6 @@ private:
 
 	void connect_to_server();
 	void authentification(std::string username, std::string password);
+	void reciver();
 };
 
