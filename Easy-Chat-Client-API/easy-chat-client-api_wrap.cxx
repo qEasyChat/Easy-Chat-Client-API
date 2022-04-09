@@ -8,7 +8,7 @@
  * interface file instead.
  * ----------------------------------------------------------------------------- */
 
-
+#include "pch.h"
 #ifndef SWIGCSHARP
 #define SWIGCSHARP
 #endif

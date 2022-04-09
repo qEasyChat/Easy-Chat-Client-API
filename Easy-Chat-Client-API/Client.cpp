@@ -125,3 +125,46 @@ void Client::set_server_name(std::string server_name)
 {
 	this->server_name = server_name;
 }
+
+
+
+void Client::send_file(std::string file_path)
+{
+	FILE* file = fopen(file_path.c_str(), "rb");
+	size_t file_size = ftell(file);
+	rewind(file);
+	std::string header = "FILE " + file_path + " " + std::to_string(file_size);
+	send_message(header);
+	if (file_size > 0)
+	{
+		char buffer[1024];
+		do
+		{
+			size_t num = std::min(file_size, sizeof(buffer));
+			num = fread(buffer, 1, num, file);
+			if (num < 1)
+			{
+				break;;
+			}
+			send_message(buffer);
+			file_size -= num;
+		} while (file_size > 0);
+	}
+	fclose(file);
+}
+
+void Client::recive_file()
+{
+	std::string header = recive_message();
+	std::vector<std::string> header_args = Utils::string_to_vector<std::string>(header);
+	std::string file_name = header_args[1];
+	size_t file_size = std::stoi(header_args[2]);
+	FILE* file = fopen(file_name.c_str(), "wb");
+	if (file_size > 0)
+	{
+		char buffer[1024];
+		std::string file_str = recive_message();
+		fwrite(&buffer, file_str.size(), file_str.size(), file);
+	}
+	fclose(file);
+}
