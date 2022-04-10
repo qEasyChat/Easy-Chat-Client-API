@@ -48,7 +48,7 @@ public:
 	void send_message(std::string message);
 
 	void send_file(std::string file_path);
-	void recive_file();
+	void recive_file(std::string header);
 
 private:
 	std::string server_name;
