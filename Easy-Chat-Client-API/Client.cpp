@@ -87,6 +87,10 @@ void Client::reciver()
 	std::string message = "";
 	while (message != "SOCKET_DOWN") {
 		message = this->recive_message();
+		if (message == "FILE")
+		{
+			recive_file("");
+		}
 		if (!message.empty())
 		{
 			std::cout << message << std::endl;
@@ -118,6 +122,12 @@ void Client::sender() {
 
 void Client::send_message(std::string message)
 {
+	if (message.find("/file") != std::string::npos) {
+		size_t start_position_to_erase = message.find("/file");
+		message.erase(start_position_to_erase, 6);
+		send_file(message);
+		return;
+	}
 	this->server_connection->send_message(message);
 }
 
@@ -132,26 +142,26 @@ void Client::set_server_name(std::string server_name)
 	this->server_name = server_name;
 }
 
-
-
 void Client::send_file(std::string file_path)
 {
 	std::cout << "Started file transfer" << std::endl;
-	std::ifstream file(file_path, std::ios::binary);
+	std::ifstream file(file_path);
 
 	std::string header = "FILE " + file_path;
-	send_message(header);
+	this->server_connection->send_message("/file");
 
-	std::vector<char> data = std::vector<char>(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
+	std::ifstream input("D:\\Workshop\\EasyChat-Client-CLI\\x64\\Debug\\asd.txt", std::ios::binary);
+
+	std::vector<char> data(std::istreambuf_iterator<char>(input), {});
 	this->server_connection->send_message(data);
-	std::cout << "File transfer complete";
+	std::cout << "File transfer complete" << std::endl;
 
 }
 
 void Client::recive_file(std::string header)
 {
-	std::vector<std::string> header_args = Utils::string_to_vector<std::string>(header);
-	std::string file_name = header_args[1];
+	//std::vector<std::string> header_args = Utils::string_to_vector<std::string>(header);
+	std::string file_name = "recv-file";
 	std::fstream file;
 	std::vector<char> file_content = this->server_connection->recive_bytes();
 	file.open(file_name, std::ios::app | std::ios::binary);
