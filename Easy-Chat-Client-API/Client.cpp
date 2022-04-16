@@ -152,7 +152,7 @@ void Client::send_file(std::string file_path)
 
 	std::ifstream input("D:\\Workshop\\EasyChat-Client-CLI\\x64\\Debug\\asd.txt", std::ios::binary);
 
-	std::vector<char> data(std::istreambuf_iterator<char>(input), {});
+	std::vector<unsigned char> data(std::istreambuf_iterator<char>(input), {});
 	this->server_connection->send_message(data);
 	std::cout << "File transfer complete" << std::endl;
 
@@ -163,7 +163,7 @@ void Client::recive_file(std::string header)
 	//std::vector<std::string> header_args = Utils::string_to_vector<std::string>(header);
 	std::string file_name = "recv-file";
 	std::fstream file;
-	std::vector<char> file_content = this->server_connection->recive_bytes();
+	std::vector<unsigned char> file_content = this->server_connection->recive_bytes();
 	file.open(file_name, std::ios::app | std::ios::binary);
 	file.write(reinterpret_cast<char*>(&file_content), sizeof(file_content));
 }
