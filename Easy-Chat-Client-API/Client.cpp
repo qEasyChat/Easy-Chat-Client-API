@@ -54,7 +54,6 @@ void Client::connect_and_auth(std::string username, std::string password) {
 void Client::connect_to_server()
 {
 	SOCKET client_socket = this->server_connection->get_socket();
-
 	if (connect(client_socket, (struct sockaddr*)&server_addr, sizeof(server_addr)) < 0) {
 		throw Server_Down_Exception();
 	}
@@ -100,15 +99,19 @@ void Client::reciver()
 
 
 std::string Client::recive_message() {
+	
 	std::string message = this->server_connection->recive_message();
 	if (message.find("FILE") != std::string::npos) {
 		recive_file(message);
+		std::cout << "RECIVED FILE" << std::endl;
 		return message;
 	}
 	if (message != "" || message != "\n")
 	{
+		std::cout << "RECIVED MESSAGE:" << message << std::endl;
 		return message;
 	}
+	std::cout << "RECIVED NULL" << std::endl;
 	return NULL;
 }
 
@@ -150,7 +153,7 @@ void Client::send_file(std::string file_path)
 	std::string header = "FILE " + file_path;
 	this->server_connection->send_message("/file");
 
-	std::ifstream input("D:\\Workshop\\EasyChat-Client-CLI\\x64\\Debug\\asd.txt", std::ios::binary);
+	std::ifstream input("D:\\Workshop\\EasyChat-Client-CLI\\x64\\Debug\\asd.png", std::ios::binary);
 
 	std::vector<unsigned char> data(std::istreambuf_iterator<char>(input), {});
 	this->server_connection->send_message(data);
@@ -160,10 +163,16 @@ void Client::send_file(std::string file_path)
 
 void Client::recive_file(std::string header)
 {
+	std::vector<unsigned char> data = this->server_connection->recive_bytes();
+	if (data.size() == 0)
+	{
+		return;
+	}
 	//std::vector<std::string> header_args = Utils::string_to_vector<std::string>(header);
-	std::string file_name = "recv-file";
-	std::fstream file;
-	std::vector<unsigned char> file_content = this->server_connection->recive_bytes();
-	file.open(file_name, std::ios::app | std::ios::binary);
-	file.write(reinterpret_cast<char*>(&file_content), sizeof(file_content));
+	std::string file_name = "recv-file.png";
+	std::ofstream file(file_name, std::ios::out | std::ios::binary);
+	for (auto byte : data)
+	{
+		file << byte;
+	}
 }
